@@ -6,6 +6,14 @@ const CacheData = require('../models/CacheData');
 const { generateRandomString, checkIfBeyondTtl } = require('../utils');
 
 module.exports = {
+  /**
+   *
+   * @param req
+   * @param res
+   * @returns {Promise<*>}
+   *
+   * Get all cached data
+   */
   async getAll(req, res) {
     try {
       const cachedData = await CacheData.find({});
@@ -15,6 +23,20 @@ module.exports = {
       return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR);
     }
   },
+  /**
+   *
+   * @param req { params: { key } }
+   * @param res
+   * @returns {Promise<*>}
+   *
+   * Get cached data by key
+   * If found, then log 'Cache hit'
+   * check for expiry, if expired then reset the value to a random string
+   * update the expiresAt value on every 'Cache hit'
+   *
+   * If not found, then log 'Cache miss'
+   * create an entry with cache with a random string
+   */
   async getOne(req, res) {
     try {
       const { key } = req.params;
@@ -47,6 +69,15 @@ module.exports = {
       return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR);
     }
   },
+  /**
+   *
+   * @param req
+   * @param res
+   * @returns {Promise<*>}
+   *
+   * Update the data for a given key.
+   * If not found, then create the data for given key.
+   */
   async createOrUpdate(req, res) {
     try {
       const { errors } = validationResult(req);
@@ -81,6 +112,14 @@ module.exports = {
       res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR);
     }
   },
+  /**
+   *
+   * @param req
+   * @param res
+   * @returns {Promise<*>}
+   *
+   * Delete a record by key.
+   */
   async deleteOne(req, res) {
     try {
       const { key } = req.params;
@@ -92,6 +131,14 @@ module.exports = {
       return res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR);
     }
   },
+  /**
+   *
+   * @param req
+   * @param res
+   * @returns {Promise<*>}
+   *
+   * Delete all records.
+   */
   async deleteAll(req, res) {
     try {
       const deletedCount = await CacheData.deleteMany({});
