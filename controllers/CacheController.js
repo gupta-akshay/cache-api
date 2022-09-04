@@ -3,7 +3,7 @@ const { isEmpty, isNil } = require('lodash');
 const { validationResult } = require('express-validator');
 
 const CacheData = require('../models/CacheData');
-const { generateRandomString } = require('../utils');
+const { generateRandomString, checkIfBeyondTtl } = require('../utils');
 
 module.exports = {
   async getAll(req, res) {
@@ -24,7 +24,13 @@ module.exports = {
       // Found in cache
       if (!isEmpty(cacheData)) {
         console.log('Cache hit');
-        return res.status(HttpStatusCodes.OK).json(cacheData);
+
+        if (checkIfBeyondTtl(cacheData?.expiresAt)) {
+          cacheData.value = generateRandomString();
+        }
+
+        const newCachedData = await cachedData.save();
+        return res.status(HttpStatusCodes.OK).json(newCachedData);
       }
 
       // Not found in cache
@@ -33,7 +39,7 @@ module.exports = {
       await CacheData.create({
         key,
         value,
-      }).save();
+      });
 
       return res.status(HttpStatusCodes.CREATED).json({ value });
     } catch (e) {
@@ -64,11 +70,11 @@ module.exports = {
       }
 
       // create new record
-      const createdCache = new CacheData({
+      const createdCache = await CacheData.create({
         key,
         value,
         ttl,
-      }).save();
+      });
       return res.status(HttpStatusCodes.CREATED).json(createdCache);
     } catch (e) {
       console.error('Error in CacheController.createOrUpdate ---', e);

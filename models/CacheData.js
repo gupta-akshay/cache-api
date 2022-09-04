@@ -22,6 +22,11 @@ const cacheDataSchema = new Schema(
 
 cacheDataSchema.pre('save', async function (next) {
   const toSave = this;
+
+  if (toSave.ttl) {
+    toSave.expiresAt = getTimestampForExpiration(item.ttl);
+  }
+
   // if a new item is created then
   // we have access to a document property 'isNew'
   // this lets us know if the object being saved

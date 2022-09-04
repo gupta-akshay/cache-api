@@ -13,3 +13,5 @@ exports.generateRandomString = (length = 70) => {
 
   return result;
 };
+
+exports.checkIfBeyondTtl = (expiryDate) => expiryDate > Date.now();
