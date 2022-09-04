@@ -20,6 +20,6 @@ const cacheDataSchema = new Schema(
   { timestamps: true }
 );
 
-const CacheData = Mongoose.model('CacheData', cacheDataSchema);
+const CacheData = Mongoose.model('CacheData', cacheDataSchema, 'cache');
 
 module.exports = CacheData;

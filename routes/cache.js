@@ -1,15 +1,18 @@
 const express = require('express');
+const {
+  getAll,
+  getOne,
+  deleteOne,
+  deleteAll,
+} = require('../controllers/CacheController');
+
 const router = express.Router();
 
 /* GET returns all stored keys in the cache */
-router.get('/', function (req, res, _next) {
-  res.send('respond with a resource');
-});
+router.get('/', getAll);
 
 /* GET returns the cached data for a given key */
-router.get('/:key', function (req, res, _next) {
-  res.send('respond with a resource');
-});
+router.get('/:key', getOne);
 
 /* POST creates the data for a given key */
 router.post('/:key', function (req, res, _next) {
@@ -22,13 +25,9 @@ router.put('/:key', function (req, res, _next) {
 });
 
 /* DELETE removes a given key from the cache */
-router.delete('/:key', function (req, res, _next) {
-  res.send('respond with a resource');
-});
+router.delete('/:key', deleteOne);
 
 /* DELETE removes all keys from the cache */
-router.delete('/', function (req, res, _next) {
-  res.send('respond with a resource');
-});
+router.delete('/', deleteAll);
 
 module.exports = router;
