@@ -3,6 +3,7 @@ const { isEmpty } = require('lodash');
 const { body, param } = require('express-validator');
 
 const CacheData = require('../models/CacheData');
+const { generateRandomString } = require('../utils');
 
 module.exports = {
   async getAll(req, res) {
@@ -26,18 +27,15 @@ module.exports = {
         return res.status(HttpStatusCodes.OK).json(cacheData);
       }
 
-      // not found in cache
+      // Not found in cache
       console.log('Cache miss');
-      /**
-       * TODO -
-       * 1. Create a random string
-       * 2. Create record in cache with this random string as value
-       * 3. Return the random string in response
-       */
+      const value = generateRandomString();
+      await CacheData.create({
+        key,
+        value,
+      });
 
-      return res
-        .status(HttpStatusCodes.CREATED)
-        .json({ value: 'randomString' });
+      return res.status(HttpStatusCodes.CREATED).json({ value });
     } catch (e) {
       console.error('Error in CacheController.getOne ---', e);
       res.status(HttpStatusCodes.INTERNAL_SERVER_ERROR);
