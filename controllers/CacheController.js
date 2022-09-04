@@ -33,7 +33,7 @@ module.exports = {
       await CacheData.create({
         key,
         value,
-      });
+      }).save();
 
       return res.status(HttpStatusCodes.CREATED).json({ value });
     } catch (e) {
@@ -43,7 +43,7 @@ module.exports = {
   },
   async createOrUpdate(req, res) {
     try {
-      const errors = validationResult(req);
+      const { errors } = validationResult(req);
       if (!isEmpty(errors)) {
         return res.status(HttpStatusCodes.BAD_REQUEST).json(errors);
       }
@@ -68,7 +68,7 @@ module.exports = {
         key,
         value,
         ttl,
-      });
+      }).save();
       return res.status(HttpStatusCodes.CREATED).json(createdCache);
     } catch (e) {
       console.error('Error in CacheController.createOrUpdate ---', e);
